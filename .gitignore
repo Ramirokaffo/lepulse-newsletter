@@ -1,0 +1,27 @@
+# Django specific
+*.log
+*.pot
+*.pyc
+__pycache__/
+# */migrations/*.py
+# !*/migrations/__init__.py
+# /migrations/
+
+db.sqlite3
+media/
+.idea/
+.vscode/
+# Environments
+
+*.env
+*.conf
+.env
+venv/
+env/
+env314/
+ENV/
+.venv/
+
+
+id_ed25519_ysem
+id_ed25519_ysem.pub
