@@ -10,6 +10,39 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Ropa+Sans&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
+
+  {# SEO Meta Tags #}
+
+
+    <meta name="keywords" content="Le Pulse, Accent Média, Newsletter, Communication, Innovation, Impact, Afrique, Technologie">
+    <meta name="author" content="Ramiro Kaffo">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{% block canonical_url %}{{ request.build_absolute_uri }}{% endblock %}">
+    
+    {# Open Graph Meta Tags pour les réseaux sociaux #}
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:locale" content="fr_FR">
+
+    {% block meta %}
+    <meta name="description" content="{% block meta_description %}Le Pulse, la newsletter d'Accent Média & Technologies{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}Le Pulse - Newsletter d'Accent Média{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Restez informé des dernières tendances en communication et technologie en Afrique avec Le Pulse.{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{% load static %}{% static 'images/logo-ACCENT.png' %}{% endblock %}">
+    <meta property="og:image:secure_url" content="{% load static %}{% static 'images/logo-ACCENT.png' %}">
+
+    {% endblock meta %}
+
+
+    {# Twitter Card Meta Tags #}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}Le Pulse - Newsletter d'Accent Média{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Restez informé des dernières tendances en communication et technologie en Afrique avec Le Pulse.{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{% load static %}{% static 'images/logo-ACCENT.png' %}{% endblock %}">
+
+    {# Favicon #}
+    <link rel="icon" type="image/jpeg" href="{% load static %}{% static 'images/logo-ACCENT.png' %}">
+
   {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -21,7 +54,7 @@
     <nav aria-label="Navigation principale">
       <a href="{% url 'newsletters:archive' %}">Archives</a>
       {% if user.is_authenticated %}
-        <a href="{% url 'core:dashboard' %}">Tableau de bord</a>
+        <a href="{% url 'core:dashboard' %}">Dashboard</a>
         <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="nav-button">Déconnexion</button></form>
       {% else %}
         <a href="{% url 'login' %}">Équipe</a>

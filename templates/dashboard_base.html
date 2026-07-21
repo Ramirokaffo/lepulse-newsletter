@@ -13,7 +13,7 @@
     <a class="{% block nav_statistics %}{% endblock %}" href="{% url 'core:statistics' %}">Statistiques</a>
     {% if user.is_administrator %}
       <a class="{% block nav_audit %}{% endblock %}" href="{% url 'core:audit_log' %}">Journal d'audit</a>
-      <a href="{% url 'admin:index' %}">Administration Django</a>
+      <a href="{% url 'admin:index' %}">Super Administration</a>
     {% endif %}
   </aside>
   <section class="dashboard-content">{% block dashboard_content %}{% endblock %}</section>
