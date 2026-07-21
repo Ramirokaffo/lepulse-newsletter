@@ -50,6 +50,17 @@ Par défaut, Django utilise le backend console : les e-mails et liens de confirm
 
 Pour un serveur SMTP, définir au minimum : `EMAIL_BACKEND`, `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS` et `DEFAULT_FROM_EMAIL`.
 
+## Déploiement Docker
+
+1. Copier `env.example` vers `.env` sur le serveur et remplacer toutes les valeurs d'exemple.
+2. Utiliser le véritable domaine HTTPS dans `DJANGO_ALLOWED_HOSTS`, `DJANGO_CSRF_TRUSTED_ORIGINS` et `SITE_URL`.
+3. Lancer `docker compose pull && docker compose up -d`.
+4. Vérifier avec `docker compose ps` et `docker compose logs --tail=100 lepulse`.
+
+La base SQLite est stockée dans le volume `lepulse_data`. Les migrations et `collectstatic` sont exécutés automatiquement au démarrage. WhiteNoise sert les fichiers statiques collectés ; Nginx doit transmettre `X-Forwarded-Proto`.
+
+Ne jamais utiliser `*` dans `DJANGO_ALLOWED_HOSTS` en production et ne jamais versionner le fichier `.env`.
+
 ## Utilisation
 
 1. Se connecter via `/connexion/` avec un compte ayant le statut personnel.
