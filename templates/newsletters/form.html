@@ -1,0 +1,29 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}{% if newsletter %}Modifier{% else %}Nouvelle newsletter{% endif %}{% endblock %}
+{% block extra_head %}<script src="https://cdn.jsdelivr.net/npm/tinymce@7/tinymce.min.js" referrerpolicy="origin"></script>{% endblock %}
+{% block nav_newsletters %}active{% endblock %}
+{% block dashboard_content %}
+<div class="dashboard-page">
+  <div class="page-heading"><div><span class="eyebrow dark">Édition</span><h1>{% if newsletter %}Modifier la newsletter{% else %}Nouvelle newsletter{% endif %}</h1></div><a href="{% url 'newsletters:list' %}">Annuler</a></div>
+  <form method="post" class="panel editor-form" id="newsletter-form">{% csrf_token %}{{ form.non_field_errors }}
+    {% for field in form %}<label class="field">{{ field.label }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}{{ field }}{{ field.errors }}</label>{% endfor %}
+    <button class="button" type="submit">Enregistrer</button>
+  </form>
+</div>
+{% endblock %}
+{% block scripts %}
+{{ tinymce_config|json_script:"tinymce-config" }}
+<script>
+  const tinyConfig = JSON.parse(document.getElementById('tinymce-config').textContent);
+  tinyConfig.toolbar = [tinyConfig.toolbar1, tinyConfig.toolbar2];
+  delete tinyConfig.toolbar1;
+  delete tinyConfig.toolbar2;
+  tinyConfig.file_picker_callback = Function(
+    'return (' + tinyConfig.file_picker_callback + ')'
+  )();
+  tinymce.init(tinyConfig);
+  document.getElementById('newsletter-form').addEventListener('submit', () => {
+    tinymce.triggerSave();
+  });
+</script>
+{% endblock %}

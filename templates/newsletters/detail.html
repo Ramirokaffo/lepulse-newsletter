@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}{{ newsletter.title }}{% endblock %}
+{% block content %}
+<article class="newsletter-detail">
+  <header><span class="eyebrow">{{ newsletter.published_at|date:"F Y" }}</span><h1>{{ newsletter.title }}</h1><p>{{ newsletter.summary }}</p></header>
+  <div class="rich-content">{{ newsletter.content|safe }}</div>
+  {% if newsletter.cta_url %}<p class="detail-cta"><a class="button" href="{{ newsletter.cta_url }}" rel="noopener">{{ newsletter.cta_label|default:"En savoir plus" }}</a></p>{% endif %}
+</article>
+{% endblock %}

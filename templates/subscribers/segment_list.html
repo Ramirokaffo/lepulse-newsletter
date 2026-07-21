@@ -1,0 +1,4 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Segments{% endblock %}
+{% block nav_segments %}active{% endblock %}
+{% block dashboard_content %}<div class="page-heading"><div><span class="eyebrow dark">Audience</span><h1>Segments</h1></div><a class="button" href="{% url 'subscribers:segment_create' %}">Nouveau segment</a></div><div class="card-grid segment-grid">{% for segment in segments %}<article class="panel segment-card"><span class="badge">{{ segment.get_rule_display }}</span><h2><a href="{% url 'subscribers:segment_detail' segment.pk %}">{{ segment.name }}</a></h2><p>{{ segment.description|default:"Aucune description." }}</p><strong>{{ segment.member_count }} membre(s)</strong></article>{% empty %}<div class="panel"><p>Aucun segment créé.</p></div>{% endfor %}</div>{% endblock %}

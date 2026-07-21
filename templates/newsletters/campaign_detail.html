@@ -1,0 +1,24 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}{{ campaign.name }}{% endblock %}
+{% block nav_campaigns %}active{% endblock %}
+{% block dashboard_content %}
+<div class="dashboard-page">
+  <div class="page-heading"><div><span class="eyebrow dark">Campagne</span><h1>{{ campaign.name }}</h1></div><div class="inline-actions"><a href="{% url 'newsletters:campaign_preview' campaign.pk %}" target="_blank">Prévisualiser</a>{% if can_administer and campaign.recipient_count %}<a href="{% url 'newsletters:campaign_export' campaign.pk %}">Exporter</a>{% endif %}<a href="{% url 'newsletters:campaign_list' %}">Retour</a></div></div>
+  <div class="stats-grid"><div class="stat"><span>Destinataires</span><strong>{% if campaign.recipient_count %}{{ campaign.recipient_count }}{% else %}{{ campaign.recipients.count }}{% endif %}</strong></div><div class="stat"><span>Livraison</span><strong>{{ campaign.delivery_rate }}%</strong></div><div class="stat"><span>Ouvertures</span><strong>{{ campaign.open_rate }}%</strong></div><div class="stat accent"><span>Clics</span><strong>{{ campaign.click_rate }}%</strong></div></div>
+  <div class="panel campaign-summary"><h2>{{ campaign.newsletter.title }}</h2><p><strong>Cible :</strong> {{ campaign.segment|default:"Tous les abonnés actifs" }}</p><p><strong>Statut :</strong> <span class="badge {{ campaign.status }}">{{ campaign.get_status_display }}</span></p>
+    {% if campaign.scheduled_at %}<p><strong>Programmée pour :</strong> {{ campaign.scheduled_at|date:"d/m/Y H:i" }}</p>{% endif %}
+    {% if error_messages %}<div class="send-error"><strong>Pourquoi l'envoi a échoué :</strong><ul>{% for error in error_messages %}<li>{{ error }}</li>{% endfor %}</ul><p>Vérifiez que la boîte configurée dans <code>DEFAULT_FROM_EMAIL</code> existe et est autorisée à envoyer via ce compte SMTP.</p></div>{% endif %}
+    <div class="campaign-actions">
+      <form method="post" action="{% url 'newsletters:campaign_test' campaign.pk %}"><h3>Envoi de test</h3>{% csrf_token %}{{ test_form.email }}<button class="button secondary" type="submit">Envoyer le test</button></form>
+      {% if can_administer and campaign.status == 'draft' %}<form method="post" action="{% url 'newsletters:campaign_schedule' campaign.pk %}"><h3>Programmer l'envoi</h3>{% csrf_token %}{{ schedule_form.scheduled_at }}<button class="button secondary" type="submit">Planifier</button></form>{% endif %}
+    </div>
+    <div class="inline-actions action-footer">
+      {% if can_administer %}{% if campaign.status == 'draft' or campaign.status == 'failed' %}<form method="post" action="{% url 'newsletters:campaign_send' campaign.pk %}" onsubmit="return confirm('Envoyer cette campagne maintenant ?');">{% csrf_token %}<button class="button" type="submit">{% if campaign.status == 'failed' %}Réessayer les échecs{% else %}Envoyer maintenant{% endif %}</button></form>{% endif %}
+      {% if campaign.status == 'scheduled' %}<form method="post" action="{% url 'newsletters:campaign_cancel' campaign.pk %}" onsubmit="return confirm('Annuler cette programmation ?');">{% csrf_token %}<button class="button danger" type="submit">Annuler la programmation</button></form>{% endif %}{% endif %}
+    </div>
+  </div>
+  {% if deliveries %}<div class="panel delivery-panel"><div class="panel-title"><h2>Historique des destinataires</h2><span>{{ campaign.success_count }} envoyé(s) · {{ campaign.failure_count }} échec(s)</span></div><div class="table-wrap"><table><thead><tr><th>Abonné</th><th>Statut</th><th>Envoi</th><th>Ouverture</th><th>Clic</th></tr></thead><tbody>{% for delivery in deliveries %}<tr><td>{{ delivery.subscriber.email }}</td><td><span class="badge {{ delivery.status }}">{{ delivery.get_status_display }}</span></td><td>{{ delivery.sent_at|date:"d/m/Y H:i"|default:"—" }}</td><td>{{ delivery.opened_at|date:"d/m/Y H:i"|default:"—" }}</td><td>{{ delivery.clicked_at|date:"d/m/Y H:i"|default:"—" }}</td></tr>{% endfor %}</tbody></table></div></div>{% endif %}
+  {% if campaign.recipient_count %}<div class="panel delivery-panel"><h2>Activité sur 14 jours</h2>{% include 'core/_activity_chart.html' %}</div>{% endif %}
+  {% if can_administer and tracking_events %}<div class="panel delivery-panel"><div class="panel-title"><h2>Événements récents</h2><span>50 derniers</span></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Type</th><th>Abonné</th><th>IP</th><th>Navigateur</th></tr></thead><tbody>{% for event in tracking_events %}<tr><td>{{ event.created_at|date:"d/m/Y H:i:s" }}</td><td>{{ event.get_event_type_display }}</td><td>{{ event.delivery.subscriber.email }}</td><td>{{ event.ip_address|default:"—" }}</td><td class="user-agent">{{ event.user_agent|default:"—" }}</td></tr>{% endfor %}</tbody></table></div></div>{% endif %}
+</div>
+{% endblock %}

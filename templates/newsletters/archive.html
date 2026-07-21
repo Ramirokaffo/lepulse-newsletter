@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Archives{% endblock %}
+{% block content %}
+<section class="archive-hero">
+  <span class="eyebrow">Le Pulse</span>
+  <h1>Toutes les éditions</h1>
+  <p>Retrouvez nos analyses, tendances et idées pour garder une longueur d'avance.</p>
+</section>
+<section class="section"><div class="card-grid">
+  {% for item in newsletters %}
+    <article class="article-card"><span>{{ item.published_at|date:"F Y" }}</span><h3>{{ item.title }}</h3><p>{{ item.summary }}</p><a href="{{ item.get_absolute_url }}">Lire l'édition →</a></article>
+  {% empty %}<p class="empty">Aucune édition publiée pour le moment.</p>{% endfor %}
+</div></section>
+{% endblock %}

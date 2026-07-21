@@ -1,0 +1,11 @@
+body {
+  color: #1e1f2f;
+  font-family: Poppins, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 20px;
+}
+
+a { color: #e84e0e; }
+img { height: auto; max-width: 100%; }
+h1, h2, h3 { line-height: 1.2; }

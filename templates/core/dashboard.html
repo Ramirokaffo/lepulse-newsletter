@@ -1,0 +1,8 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Tableau de bord{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+{% block dashboard_content %}
+    <div class="page-heading"><div><span class="eyebrow dark">Pilotage</span><h1>Bonjour {{ user.first_name|default:user.username }}</h1></div><a class="button" href="{% url 'newsletters:create' %}">Nouvelle newsletter</a></div>
+    <div class="stats-grid"><div class="stat"><span>Abonnés actifs</span><strong>{{ subscriber_count }}</strong></div><div class="stat"><span>Newsletters</span><strong>{{ newsletter_count }}</strong></div><div class="stat"><span>Campagnes envoyées</span><strong>{{ campaign_count }}</strong></div><div class="stat accent"><span>Taux d'ouverture</span><strong>{{ open_rate }}%</strong></div></div>
+    <div class="dashboard-panels"><div class="panel"><div class="panel-title"><h2>Campagnes récentes</h2><a href="{% url 'newsletters:campaign_list' %}">Voir tout</a></div><div class="table-wrap"><table><thead><tr><th>Campagne</th><th>Statut</th><th>Destinataires</th><th>Date</th></tr></thead><tbody>{% for campaign in recent_campaigns %}<tr><td><a href="{% url 'newsletters:campaign_detail' campaign.pk %}">{{ campaign.name }}</a></td><td><span class="badge {{ campaign.status }}">{{ campaign.get_status_display }}</span></td><td>{{ campaign.recipient_count }}</td><td>{{ campaign.sent_at|date:"d/m/Y H:i"|default:"—" }}</td></tr>{% empty %}<tr><td colspan="4">Aucune campagne pour le moment.</td></tr>{% endfor %}</tbody></table></div></div><div class="panel"><div class="panel-title"><h2>Activité sur 7 jours</h2><a href="{% url 'core:statistics' %}">Détails</a></div>{% include 'core/_activity_chart.html' %}</div></div>
+{% endblock %}

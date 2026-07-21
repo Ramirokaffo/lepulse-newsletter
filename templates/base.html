@@ -1,0 +1,39 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Le Pulse, la newsletter d'Accent Média & Technologies">
+  <title>{% block title %}Le Pulse{% endblock %} · Accent Média</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Ropa+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="{% url 'core:home' %}" aria-label="Accueil Le Pulse">
+      <img class="brand-logo" src="{% static 'images/logo-ACCENT.png' %}" alt="Accent Média & Technology">
+      <span class="brand-product">LE <strong>PULSE</strong></span>
+    </a>
+    <nav aria-label="Navigation principale">
+      <a href="{% url 'newsletters:archive' %}">Archives</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'core:dashboard' %}">Tableau de bord</a>
+        <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="nav-button">Déconnexion</button></form>
+      {% else %}
+        <a href="{% url 'login' %}">Équipe</a>
+      {% endif %}
+    </nav>
+  </header>
+  {% if messages %}<div class="messages" aria-live="polite">{% for message in messages %}<div class="message {{ message.tags }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+  <main>{% block content %}{% endblock %}</main>
+  <footer>
+    <div class="footer-brand"><img src="{% static 'images/logo-ACCENT.png' %}" alt="Accent Média & Technology"><span>Communication · Innovation · Impact</span></div>
+    <div>© {% now "Y" %} Le Pulse · Tous droits réservés</div>
+  </footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

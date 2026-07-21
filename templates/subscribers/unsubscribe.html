@@ -1,0 +1,3 @@
+{% extends 'base.html' %}
+{% block title %}Se désinscrire{% endblock %}
+{% block content %}<section class="auth-section"><form method="post" class="form-card">{% csrf_token %}<span class="eyebrow dark">Vos préférences</span><h1>Se désinscrire</h1><p>Confirmez-vous le retrait de <strong>{{ subscriber.email }}</strong> de la newsletter Le Pulse ?</p><button class="button full" type="submit">Confirmer la désinscription</button></form></section>{% endblock %}

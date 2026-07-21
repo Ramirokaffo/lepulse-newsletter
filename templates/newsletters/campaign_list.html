@@ -1,0 +1,10 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Campagnes{% endblock %}
+{% block nav_campaigns %}active{% endblock %}
+{% block dashboard_content %}
+    <div class="page-heading"><div><span class="eyebrow dark">Diffusion</span><h1>Campagnes</h1></div><a class="button" href="{% url 'newsletters:campaign_create' %}">Nouvelle campagne</a></div>
+    <div class="panel"><div class="table-wrap"><table><thead><tr><th>Campagne</th><th>Newsletter</th><th>Segment</th><th>Statut</th><th>Résultats</th></tr></thead><tbody>
+      {% for item in campaigns %}<tr><td><a href="{% url 'newsletters:campaign_detail' item.pk %}"><strong>{{ item.name }}</strong></a>{% if item.scheduled_at %}<br><small>{{ item.scheduled_at|date:"d/m/Y H:i" }}</small>{% endif %}</td><td>{{ item.newsletter.title }}</td><td>{{ item.segment|default:"Tous les abonnés" }}</td><td><span class="badge {{ item.status }}">{{ item.get_status_display }}</span></td><td>{{ item.success_count }}/{{ item.recipient_count }}</td></tr>
+      {% empty %}<tr><td colspan="5">Aucune campagne.</td></tr>{% endfor %}
+    </tbody></table></div></div>
+{% endblock %}

@@ -1,0 +1,4 @@
+<div class="activity-chart" aria-label="Activité des ouvertures et clics">
+  <div class="chart-legend"><span><i class="open-dot"></i> Ouvertures</span><span><i class="click-dot"></i> Clics</span></div>
+  {% for day in activity %}<div class="chart-row"><span>{{ day.label }}</span><div class="chart-bars"><i class="open-bar" style="width:{{ day.open_width }}%" title="{{ day.opens }} ouverture(s)"></i><i class="click-bar" style="width:{{ day.click_width }}%" title="{{ day.clicks }} clic(s)"></i></div><strong>{{ day.opens }} / {{ day.clicks }}</strong></div>{% endfor %}
+</div>

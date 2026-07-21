@@ -1,0 +1,10 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Newsletters{% endblock %}
+{% block nav_newsletters %}active{% endblock %}
+{% block dashboard_content %}
+    <div class="page-heading"><div><span class="eyebrow dark">Éditorial</span><h1>Newsletters</h1></div><a class="button" href="{% url 'newsletters:create' %}">Nouvelle newsletter</a></div>
+    <div class="panel"><div class="table-wrap"><table><thead><tr><th>Titre</th><th>Statut</th><th>Auteur</th><th>Mise à jour</th><th></th></tr></thead><tbody>
+      {% for item in newsletters %}<tr><td><strong>{{ item.title }}</strong><br>{{ item.subject }}</td><td><span class="badge {{ item.status }}">{{ item.get_status_display }}</span></td><td>{{ item.author|default:"—" }}</td><td>{{ item.updated_at|date:"d/m/Y H:i" }}</td><td><a href="{% url 'newsletters:edit' item.pk %}">Modifier</a></td></tr>
+      {% empty %}<tr><td colspan="5">Aucune newsletter.</td></tr>{% endfor %}
+    </tbody></table></div></div>
+{% endblock %}

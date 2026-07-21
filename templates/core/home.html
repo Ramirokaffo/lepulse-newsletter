@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}L'actualité qui donne le rythme{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow">La newsletter mensuelle d'Accent Média</span>
+    <h1>L'actualité qui donne le <em>rythme.</em></h1>
+    <p>Décryptages, tendances digitales et coulisses de nos métiers, directement dans votre boîte de réception.</p>
+    <a class="button" href="#inscription">Je m'abonne</a>
+  </div>
+  <div class="pulse-card" aria-hidden="true"><span>LE</span><strong>PULSE</strong><i></i></div>
+</section>
+<section class="subscribe-section" id="inscription">
+  <div><span class="eyebrow dark">Ne manquez plus l'essentiel</span><h2>Un concentré d'idées,<br>une fois par mois.</h2></div>
+  <form class="subscribe-form" method="post" action="{% url 'subscribers:subscribe' %}">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="form-row">{{ form.first_name }}{{ form.email }}<button class="button" type="submit">S'inscrire</button></div>
+    <label class="consent">{{ form.consent }} <span>J'accepte de recevoir Le Pulse et la politique de confidentialité.</span></label>
+    {{ form.email.errors }}{{ form.consent.errors }}
+  </form>
+</section>
+<section class="section">
+  <div class="section-heading"><div><span class="eyebrow dark">À lire</span><h2>Les dernières éditions</h2></div><a href="{% url 'newsletters:archive' %}">Toutes les archives →</a></div>
+  <div class="card-grid">
+    {% for item in latest_newsletters %}
+      <article class="article-card"><span>{{ item.published_at|date:"F Y" }}</span><h3>{{ item.title }}</h3><p>{{ item.summary|safe|truncatewords:22 }}</p><a href="{{ item.get_absolute_url }}">Lire l'édition →</a></article>
+    {% empty %}<p class="empty">La première édition de Le Pulse arrive bientôt.</p>{% endfor %}
+  </div>
+</section>
+{% endblock %}

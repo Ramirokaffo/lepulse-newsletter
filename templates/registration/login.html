@@ -1,0 +1,3 @@
+{% extends 'base.html' %}
+{% block title %}Connexion{% endblock %}
+{% block content %}<section class="auth-section"><form method="post" class="form-card">{% csrf_token %}<span class="eyebrow dark">Espace équipe</span><h1>Connexion</h1>{{ form.non_field_errors }}<label>Nom d'utilisateur{{ form.username }}</label><label>Mot de passe{{ form.password }}</label><button class="button full" type="submit">Se connecter</button></form></section>{% endblock %}

@@ -1,0 +1,4 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}{% if subscriber %}Modifier l'abonné{% else %}Nouvel abonné{% endif %}{% endblock %}
+{% block nav_subscribers %}active{% endblock %}
+{% block dashboard_content %}<div class="dashboard-page narrow"><div class="page-heading"><div><span class="eyebrow dark">Audience</span><h1>{% if subscriber %}Modifier l'abonné{% else %}Ajouter un abonné{% endif %}</h1></div><a href="{% if subscriber %}{% url 'subscribers:detail' subscriber.pk %}{% else %}{% url 'subscribers:list' %}{% endif %}">Annuler</a></div><form class="form-card editor-form" method="post">{% csrf_token %}{{ form.non_field_errors }}{% for field in form %}<label class="field">{{ field.label }}{{ field }}{{ field.errors }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}</label>{% endfor %}<button class="button" type="submit">Enregistrer</button></form></div>{% endblock %}

@@ -10,22 +10,33 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-wqk^i4eu(2jc_#4om_@gp3jrqs#elehlase7%=t$k#qr*!%bfi'
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY', 'django-insecure-development-only-change-me'
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    host
+    for host in os.environ.get(
+        'DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0'
+    ).split(',')
+    if host
+]
 
 
 # Application definition
@@ -37,9 +48,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts',
+    'core',
+    'subscribers',
+    'newsletters',
 ]
 
 MIDDLEWARE = [
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -54,7 +70,7 @@ ROOT_URLCONF = 'lepulse.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -65,7 +81,6 @@ TEMPLATES = [
         },
     },
 ]
-
 WSGI_APPLICATION = 'lepulse.wsgi.application'
 
 
@@ -102,9 +117,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr-fr'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Douala'
 
 USE_I18N = True
 
@@ -115,3 +130,108 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+
+AUTH_USER_MODEL = 'accounts.User'
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'core:dashboard'
+LOGOUT_REDIRECT_URL = 'core:home'
+
+EMAIL_BACKEND = os.environ.get(
+    'EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend'
+)
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'localhost')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True').lower() == 'true'
+DEFAULT_FROM_EMAIL = os.environ.get(
+    'DEFAULT_FROM_EMAIL', 'Le Pulse <newsletter@accentmedia.cm>'
+)
+
+SITE_URL = os.environ.get('SITE_URL', 'http://127.0.0.1:8000').rstrip('/')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {'class': 'logging.StreamHandler'},
+    },
+    'loggers': {
+        'newsletters': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
+
+# Configuration TinyMCE 7. Les fonctions devenues natives ne sont pas listées
+# comme plugins (textcolor, contextmenu et print ont été retirés par TinyMCE).
+TINYMCE_DEFAULT_CONFIG = {
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 20,
+    'selector': 'textarea',
+    'theme': 'silver',
+    'license_key': 'gpl',
+    'menu': {
+        'favs': {
+            'title': 'My Favorites',
+            'items': 'code visualaid | searchreplace | emoticons',
+        }
+    },
+    'menubar': 'favs file edit view insert format tools table help',
+    'plugins': '''
+        save link image media preview codesample table code lists fullscreen
+        insertdatetime nonbreaking directionality searchreplace wordcount
+        visualblocks visualchars autolink charmap anchor pagebreak emoticons
+        accordion advlist quickbars autosave importcss
+    ''',
+    'toolbar1': '''
+        fullscreen preview bold italic underline | fontfamily fontsize |
+        forecolor backcolor | alignleft alignright aligncenter alignjustify |
+        indent outdent | bullist numlist table | link image media |
+        codesample emoticons accordion | restoredraft | ltr rtl
+    ''',
+    'toolbar2': '''
+        visualblocks visualchars | charmap hr pagebreak nonbreaking anchor |
+        code quickimage quicktable
+    ''',
+    'contextmenu': 'formats | link image media | codesample',
+    'ui_mode': 'split',
+    'min_height': 500,
+    'statusbar': True,
+    'image_caption': True,
+    'file_picker_types': 'image',
+    'automatic_uploads': True,
+    'image_advtab': True,
+    'image_uploadtab': True,
+    'object_resizing': True,
+    'autosave_retention': '1440m',
+    'content_css': [
+        os.path.join('/', STATIC_URL, 'css', 'myTinyCME.css'),
+        'document',
+    ],
+    'importcss_append': True,
+    'autosave_restore_when_empty': True,
+    'file_picker_callback': '''(cb, value, meta) => {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.addEventListener('load', () => {
+                const id = 'blobid' + (new Date()).getTime();
+                const blobCache = tinymce.activeEditor.editorUpload.blobCache;
+                const base64 = reader.result.split(',')[1];
+                const blobInfo = blobCache.create(id, file, base64);
+                blobCache.add(blobInfo);
+                cb(blobInfo.blobUri(), {title: file.name});
+            });
+            reader.readAsDataURL(file);
+        });
+        input.click();
+    }''',
+    'image_list': '/get_images_url',
+}

@@ -1,0 +1,12 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Nouvelle campagne{% endblock %}
+{% block nav_campaigns %}active{% endblock %}
+{% block dashboard_content %}
+<div class="dashboard-page narrow">
+  <div class="page-heading"><div><span class="eyebrow dark">Diffusion</span><h1>Nouvelle campagne</h1></div></div>
+  <form method="post" class="panel editor-form">{% csrf_token %}{{ form.non_field_errors }}
+    {% for field in form %}<label class="field">{{ field.label }}{{ field }}{{ field.errors }}</label>{% endfor %}
+    <button class="button" type="submit">Créer et vérifier</button>
+  </form>
+</div>
+{% endblock %}
